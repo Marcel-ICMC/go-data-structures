@@ -118,6 +118,60 @@ func (d *Deque) Insert(i int, x int) {
 	n.Right = &new
 }
 
+func (d *Deque) Remove(x int) {
+	n := d.Left
+
+	for n != nil {
+		if n.Value == x {
+			if n.Left == nil {
+				d.Left = n.Right
+			} else {
+				n.Left.Right = n.Right
+			}
+
+			if n.Right == nil {
+				d.Right = n.Left
+			} else {
+				n.Right.Left = n.Left
+			}
+
+			d.Size--
+			return
+		}
+		n = n.Right
+	}
+
+	panic(fmt.Sprintf("There are no value %d in the deque", x))
+}
+
+func (d *Deque) Revese() {
+	n := d.Left
+
+	for n != nil {
+		n.Left, n.Right = n.Right, n.Left
+		n = n.Left
+	}
+
+	d.Left, d.Right = d.Right, d.Left
+}
+
+func (d *Deque) rotate(n *Node) {
+	if d.Left != n {
+		n.Left.Right = nil
+		n.Left = nil
+
+		d.Left.Left = d.Right
+		d.Right.Right = d.Left
+
+		d.Left = n
+		d.Right = n.Left
+	}
+}
+
+func (d *Deque) Rotate(i int) {
+	
+}
+
 func (d Deque) String() string {
 	n := d.Left
 	r := ""
@@ -131,11 +185,18 @@ func (d Deque) String() string {
 
 func main() {
 	t := Deque{}
-	t.Append(11)
-	t.Append(12)
-	t.Append(13)
+
+	for i := 0; i < 20; i++ {
+		t.Append(i)
+	}
 	t.Pop()
-	t.Insert(0, 0)
-	t.Insert(3, 1)
+
+	t.Remove(15)
+	fmt.Printf("%s\n", t)
+
+	t.Revese()
+	fmt.Printf("%s\n", t)
+
+	t.rotate(t.Left.Right)
 	fmt.Printf("%s\n", t)
 }
