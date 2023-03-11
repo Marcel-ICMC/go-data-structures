@@ -13,35 +13,39 @@ type Deque struct {
 type Node struct {
 	Left  *Node
 	Right *Node
-	Value int
+	Value any
 }
 
-func (d *Deque) Append(value int) {
-	newNode := Node{Value: value, Left: d.Right}
+func (d *Deque) Append(values ...any) {
+	for _, value := range values {
+		newNode := &Node{Value: value, Left: d.Right}
 
-	if d.Left == nil {
+		if d.Left == nil {
+			d.Left = newNode
+		}
+
+		if d.Right != nil {
+			d.Right.Right = newNode
+		}
+		d.Right = newNode
+		d.Size++
+	}
+}
+
+func (d *Deque) AppendLeft(values ...any) {
+	for _, value := range values {
+		newNode := Node{Value: value, Right: d.Left}
+
+		if d.Right == nil {
+			d.Right = &newNode
+		}
+
+		if d.Left != nil {
+			d.Left.Left = &newNode
+		}
 		d.Left = &newNode
+		d.Size++
 	}
-
-	if d.Right != nil {
-		d.Right.Right = &newNode
-	}
-	d.Right = &newNode
-	d.Size++
-}
-
-func (d *Deque) AppendLeft(value int) {
-	newNode := Node{Value: value, Right: d.Left}
-
-	if d.Right == nil {
-		d.Right = &newNode
-	}
-
-	if d.Left != nil {
-		d.Left.Left = &newNode
-	}
-	d.Left = &newNode
-	d.Size++
 }
 
 func (d *Deque) Count() int {
@@ -56,7 +60,7 @@ func (d *Deque) Copy() *Deque {
 	return &copy
 }
 
-func (d *Deque) Pop() int {
+func (d *Deque) Pop() any {
 	if d.Right != nil {
 		r := d.Right.Value
 
@@ -74,7 +78,7 @@ func (d *Deque) Pop() int {
 	panic("No nodes to pop!")
 }
 
-func (d *Deque) PopLeft() int {
+func (d *Deque) PopLeft() any {
 	if d.Left != nil {
 		r := d.Left.Value
 
@@ -92,7 +96,7 @@ func (d *Deque) PopLeft() int {
 	panic("No nodes to pop!")
 }
 
-func (d *Deque) Index(x int) int {
+func (d *Deque) Index(x any) int {
 	n := d.Left
 	for i := 0; n != nil; i++ {
 		if n.Value == x {
@@ -104,7 +108,7 @@ func (d *Deque) Index(x int) int {
 	panic(fmt.Sprintf("There are no value %d in the deque", x))
 }
 
-func (d *Deque) Insert(i int, x int) {
+func (d *Deque) Insert(i int, x any) {
 	if i > d.Size {
 		panic("Position unreachable!")
 	} else if i == 0 {
@@ -126,7 +130,7 @@ func (d *Deque) Insert(i int, x int) {
 	n.Right = &new
 }
 
-func (d *Deque) Remove(x int) {
+func (d *Deque) Remove(x any) {
 	for n := d.Left; n != nil; n = n.Right {
 		if n.Value == x {
 			if n.Left == nil {
@@ -189,15 +193,11 @@ func (d *Deque) Rotate(i int) {
 	d.rotate(n)
 }
 
-func (n Node) String() string {
-	return fmt.Sprintf("Left: %p, n.Value: %d, n.Right: %p", n.Left, n.Value, n.Right)
-}
-
 func (d Deque) String() string {
 	n := d.Left
 	r := ""
 	for n != nil {
-		r += fmt.Sprintf("%d ", (*n).Value)
+		r += fmt.Sprint((*n).Value) + " "
 		n = (*n).Right
 	}
 
@@ -207,9 +207,13 @@ func (d Deque) String() string {
 func main() {
 	t := Deque{}
 
+	var test_dots []any
 	for i := 0; i < 20; i++ {
-		t.Append(i)
+		test_dots = append(test_dots, i)
 	}
+
+	t.Append(test_dots...)
+	fmt.Printf("%s\n", t)
 	t.Pop()
 
 	t.Remove(15)
