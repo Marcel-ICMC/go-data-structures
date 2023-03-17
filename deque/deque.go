@@ -173,7 +173,7 @@ func (d *Deque) Remove(x any) {
 	panic(fmt.Sprintf("There are no value %d in the deque", x))
 }
 
-func (d *Deque) Revese() {
+func (d *Deque) Reverse() {
 	for n := d.left; n != nil; n = n.left {
 		n.left, n.right = n.right, n.left
 	}
@@ -222,41 +222,4 @@ func (d Deque) String() string {
 	}
 
 	return r
-}
-
-func main() {
-	t := Deque{}
-
-	var test_dots []any
-	for i := 0; i < 20; i++ {
-		test_dots = append(test_dots, i)
-	}
-
-	t.Append(test_dots...)
-	fmt.Printf("%s\n", t)
-	t.Pop()
-
-	t.Remove(15)
-	fmt.Printf("%s\n", t)
-
-	t.Revese()
-	fmt.Printf("%s\n", t)
-
-	t.Rotate(1)
-	fmt.Printf("%s\n", t)
-
-	t.Rotate(20)
-	fmt.Printf("%s\n", t)
-
-	t.Rotate(-1)
-	fmt.Printf("%s\n", t)
-
-	t.Rotate(0)
-	fmt.Printf("%s\n", t)
-
-	t.Rotate(5)
-	fmt.Printf("%s\n", t)
-
-	a := t.Copy()
-	fmt.Printf("%s\n", a)
 }
